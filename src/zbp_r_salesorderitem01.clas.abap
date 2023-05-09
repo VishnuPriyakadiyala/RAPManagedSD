@@ -1,0 +1,5 @@
+CLASS zbp_r_salesorderitem01 DEFINITION PUBLIC ABSTRACT FINAL FOR BEHAVIOR OF zr_salesordertp.
+ENDCLASS.
+
+CLASS zbp_r_salesorderitem01 IMPLEMENTATION.
+ENDCLASS.

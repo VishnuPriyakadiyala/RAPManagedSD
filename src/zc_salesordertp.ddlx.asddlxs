@@ -1,0 +1,168 @@
+@Metadata.layer: #CUSTOMER
+@UI: {
+  headerInfo: {
+    typeName: 'Salesorder', 
+    typeNamePlural: 'Salesorders', 
+    title: {
+      type: #STANDARD, 
+      label: 'Salesorder', 
+      value: 'OrderID'
+    }
+  }, 
+  presentationVariant: [ {
+    sortOrder: [ {
+      by: 'OrderID', 
+      direction: #DESC
+    } ], 
+    visualizations: [ {
+      type: #AS_LINEITEM
+    } ]
+  } ]
+}
+annotate view ZC_SalesorderTP with
+{
+  @UI.facet: [ {
+    id: 'idCollection', 
+    type: #COLLECTION, 
+    label: 'Salesorder', 
+    position: 10 
+  }, 
+  {
+    id: 'idIdentification', 
+    parentId: 'idCollection', 
+    type: #IDENTIFICATION_REFERENCE, 
+    label: 'General Information', 
+    position: 10 
+  }, 
+  {
+    id: 'idLineitem', 
+    type: #LINEITEM_REFERENCE, 
+    label: 'SalesorderItem', 
+    position: 20 , 
+    targetElement: '_SalesorderItem'
+  } ]
+  @UI.hidden: true
+  OrderUUID;
+  
+  @UI.lineItem: [ {
+    position: 20 , 
+    importance: #HIGH
+  },
+  { type: #FOR_ACTION, dataAction: 'CreateInstance', label: 'Create Instance', invocationGrouping:#CHANGE_SET } ,
+   { type: #FOR_ACTION, dataAction: 'CopyOrder',     label: 'Copy Order',      invocationGrouping:#CHANGE_SET }  ]
+  @UI.identification: [ {
+    position: 20 
+  } ]
+  @UI.selectionField: [ {
+    position: 20 
+  } ]
+  OrderID;
+  
+  @UI.lineItem: [ {
+    position: 30 , 
+    importance: #HIGH
+  } ]
+  @UI.identification: [ {
+    position: 30 
+  } ]
+  ExternalID;
+  
+  @UI.lineItem: [ {
+    position: 40 , 
+    importance: #HIGH
+  } ]
+  @UI.identification: [ {
+    position: 40 
+  } ]
+  CustomerID;
+  
+  @UI.lineItem: [ {
+    position: 50 , 
+    importance: #HIGH
+  } ]
+  @UI.identification: [ {
+    position: 50 
+  } ]
+  OrderDate;
+  
+  @UI.lineItem: [ {
+    position: 60 , 
+    importance: #HIGH
+  } ]
+  @UI.identification: [ {
+    position: 60 
+  } ]
+  BeginDate;
+  
+  @UI.lineItem: [ {
+    position: 70 , 
+    importance: #HIGH
+  } ]
+  @UI.identification: [ {
+    position: 70 
+  } ]
+  EndDate;
+  
+  @UI.lineItem: [ {
+    position: 80 , 
+    importance: #HIGH
+  } ]
+  @UI.identification: [ {
+    position: 80 
+  } ]
+  @EndUserText.label: 'Net Fee (With Discounts)'
+  NetFee;
+  
+  @UI.lineItem: [ {
+    position: 90 , 
+    importance: #HIGH
+  } ]
+  @UI.identification: [ {
+    position: 90 
+  } ]
+  TotalPrice;
+  
+  @UI.selectionField: [ {
+    position: 100 
+  } ]
+  CurrencyCode;
+  
+  @UI.lineItem: [ {
+    position: 110 , 
+    importance: #HIGH
+  } ]
+  @UI.identification: [ {
+    position: 110 
+  } ]
+  Description;
+  
+  @UI.lineItem: [ {
+    position: 120 , 
+    importance: #HIGH
+  }]
+  @UI.identification: [ {
+    position: 120 
+  } ]
+  OverallStatus;
+  
+  @UI.hidden: true
+  CreatedBy;
+  
+  @UI.hidden: true
+  CreatedAt;
+  
+  @UI.hidden: true
+  LastChangedBy;
+  
+  @UI.lineItem: [ {
+    position: 160 , 
+    importance: #HIGH
+  } ]
+  @UI.identification: [ {
+    position: 160 
+  } ]
+  LastChangedAt;
+  
+  @UI.hidden: true
+  LocalLastChangedAt;
+}
