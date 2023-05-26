@@ -1,4 +1,4 @@
-@AccessControl.authorizationCheck: #CHECK
+@AccessControl.authorizationCheck: #NOT_REQUIRED
 @Metadata.allowExtensions: true
 @EndUserText.label: 'CDS View forSalesorderItem'
 define view entity ZR_SalesorderItemTP01

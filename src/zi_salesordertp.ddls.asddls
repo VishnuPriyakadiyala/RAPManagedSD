@@ -1,4 +1,4 @@
-@AccessControl.authorizationCheck: #CHECK
+@AccessControl.authorizationCheck: #NOT_REQUIRED
 @EndUserText.label: 'Projection View forSalesorder'
 define root view entity ZI_SalesorderTP
   provider contract transactional_interface

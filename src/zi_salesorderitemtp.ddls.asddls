@@ -1,4 +1,4 @@
-@AccessControl.authorizationCheck: #CHECK
+@AccessControl.authorizationCheck: #NOT_REQUIRED
 @EndUserText.label: 'Projection View forSalesorderItem'
 define view entity ZI_SalesorderItemTP
   as projection on ZR_SalesorderItemTP01

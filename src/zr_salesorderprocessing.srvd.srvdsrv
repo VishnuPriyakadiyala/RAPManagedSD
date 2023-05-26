@@ -1,0 +1,7 @@
+@EndUserText.label: 'Sales Order Application'
+define service ZR_SalesorderProcessing {
+  expose ZC_SalesorderTP as Salesorder;
+  expose ZC_SalesorderItemTP01 as SalesorderItem;
+  expose ZI_STATUSORDVH as StatusValueHelp;
+  expose ZI_CUSTOMERVH as CustomerValueHelp;
+}
