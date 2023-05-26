@@ -1,0 +1,101 @@
+managed;
+strict ( 2 );
+with draft;
+
+
+define behavior for ZR_SalesorderTP alias Salesorder
+implementation in class zcl_r_salesordertp unique
+persistent table zsd_vbak
+draft table zsd_vbak_dt
+lock master total etag LastChangedAt
+authorization master ( global )
+etag master LocalLastChangedAt
+{
+  field ( numbering : managed, readonly ) OrderUUID;
+  field ( readonly ) OrderID;
+  field ( mandatory ) CustomerID;
+  create;
+  update;
+  delete;
+  association _SalesorderItem { create; with draft; }
+  determination CalculateOrderID on save { create; }
+  static factory action CreateInstance [1];
+  factory action CopyOrder [1];
+
+  mapping for zsd_vbak
+    {
+      OrderUUID          = order_uuid;
+      OrderID            = order_id;
+      ExternalID         = external_id;
+      CustomerID         = customer_id;
+      OrderDate          = order_date;
+      BeginDate          = begin_date;
+      EndDate            = end_date;
+      NetFee             = net_fee;
+      TotalPrice         = total_price;
+      CurrencyCode       = currency_code;
+      Description        = description;
+      OverallStatus      = overall_status;
+      CreatedBy          = created_by;
+      CreatedAt          = created_at;
+      LastChangedBy      = last_changed_by;
+      LastChangedAt      = last_changed_at;
+      LocalLastChangedAt = local_last_changed_at;
+    }
+
+  //
+  draft action Edit;
+  draft action Resume;
+  draft action Activate;
+  draft action Discard;
+  draft determine action Prepare
+  {
+  }
+}
+
+define behavior for ZR_SalesorderItemTP01 alias SalesorderItem
+implementation in class zcl_r_salesorderitem01 unique
+persistent table zsd_vbap
+draft table zsd_vbap_dt
+lock dependent by _Salesorder
+authorization dependent by _Salesorder
+etag dependent by _Salesorder
+{
+  update;
+  delete;
+  field ( readonly ) OrderUUID, OrderID;
+  field ( numbering : managed, readonly ) OrderitemUUID;
+  field ( mandatory ) Product;
+  association _Salesorder { with draft; }
+
+  determination SetInitialValue on modify { create; }
+  mapping for zsd_vbap
+    {
+      OrderitemUUID       = orderitem_uuid;
+      OrderUUID           = order_uuid;
+      OrderID             = order_id;
+      Orderitem           = orderitem;
+      Product             = product;
+      Orderquantity       = orderquantity;
+      Orderquantityunit   = orderquantityunit;
+      ProdPrice           = prod_price;
+      ProdCurrency        = prod_currency;
+      Netamount           = netamount;
+      Transactioncurrency = transactioncurrency;
+      Creationdate        = creationdate;
+      Createbyuser        = createbyuser;
+      Creationdatetime    = creationdatetime;
+      Lastchangedbyuser   = lastchangedbyuser;
+    }
+  side effects
+  {
+    field Product affects field ProdPrice, field ProdCurrency, field Netamount, field Orderquantityunit, field Orderquantity;
+    field ProdPrice affects field Netamount;
+    field Orderquantityunit affects field Netamount;
+    field Netamount affects field _Salesorder.TotalPrice, field _Salesorder.NetFee;
+
+  }
+  determination CalculateProdPrice on modify { field Product ;}
+  determination CalculateNetamount on modify { field ProdPrice, ProdCurrency, Orderquantityunit; }
+  determination CalculateHeaderNetFee on modify { field Netamount; }
+}
