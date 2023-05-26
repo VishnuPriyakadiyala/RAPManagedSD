@@ -1,4 +1,4 @@
-@AccessControl.authorizationCheck: #CHECK
+@AccessControl.authorizationCheck: #NOT_REQUIRED
 @Metadata.allowExtensions: true
 @EndUserText.label: 'Projection View forSalesorder'
 @ObjectModel.semanticKey: [ 'OrderID' ]
