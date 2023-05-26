@@ -1,19 +1,19 @@
 @Metadata.layer: #CUSTOMER
 @UI: {
   headerInfo: {
-    typeName: 'SalesorderItem', 
-    typeNamePlural: 'SalesorderItems', 
+    typeName: 'SalesorderItem',
+    typeNamePlural: 'SalesorderItems',
     title: {
-      type: #STANDARD, 
-      label: 'SalesorderItem', 
+      type: #STANDARD,
+      label: 'SalesorderItem',
       value: 'Orderitem'
     }
-  }, 
+  },
   presentationVariant: [ {
     sortOrder: [ {
-      by: 'Orderitem', 
+      by: 'Orderitem',
       direction: #DESC
-    } ], 
+    } ],
     visualizations: [ {
       type: #AS_LINEITEM
     } ]
@@ -22,78 +22,81 @@
 annotate view ZC_SalesorderItemTP01 with
 {
   @UI.facet: [ {
-    id: 'idSalesorderItem', 
-    purpose: #STANDARD, 
-    type: #IDENTIFICATION_REFERENCE, 
-    label: 'SalesorderItem', 
-    position: 10 
+    id: 'idSalesorderItem',
+    purpose: #STANDARD,
+    type: #IDENTIFICATION_REFERENCE,
+    label: 'SalesorderItem',
+    position: 10
   } ]
   @UI.hidden: true
   OrderitemUUID;
-  
+
   @UI.hidden: true
   OrderUUID;
-  
+
   @UI.lineItem: [ {
-    position: 30 , 
+    position: 30 ,
     importance: #HIGH
   } ]
   @UI.identification: [ {
-    position: 30 
+    position: 30
   } ]
- 
+  @EndUserText.label: 'Order ID'
   OrderNumb;
-  
+
   @UI.lineItem: [ {
-    position: 40 , 
+    position: 40 ,
     importance: #HIGH
   } ]
   @UI.identification: [ {
-    position: 40 
+    position: 40
   } ]
+  @EndUserText.label: 'Order Item'
   Orderitem;
-  
+
   @UI.lineItem: [ {
-    position: 50 , 
+    position: 50 ,
     importance: #HIGH
   } ]
   @UI.identification: [ {
-    position: 50 
+    position: 50
   } ]
   Product;
-  
+
   @UI.lineItem: [ {
-    position: 60 , 
+    position: 60 ,
     importance: #HIGH
   } ]
   @UI.identification: [ {
-    position: 60 
+    position: 60
   } ]
+  @EndUserText.label: 'Product Quantity'
   Orderquantity;
-  
-   @UI.identification: [ {
-    position: 65 
+
+  @UI.identification: [ {
+   position: 65
   } ]
 
   ProdPrice;
   @UI.lineItem: [ {
-    position: 80 , 
+    position: 80 ,
     importance: #HIGH
   } ]
   @UI.identification: [ {
-    position: 80 
+    position: 80
   } ]
+  @EndUserText.label: 'Net Amount'
   Netamount;
-  
+
   @UI.hidden: true
   Creationdate;
-  
- @UI.hidden: true
+
+  @UI.hidden: true
   Createbyuser;
-  
+
   @UI.hidden: true
   Creationdatetime;
-  
+
   @UI.hidden: true
   Lastchangedbyuser;
 }
