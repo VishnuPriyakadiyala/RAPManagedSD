@@ -19,6 +19,7 @@ define root view entity ZR_SalesorderTP
       net_fee               as NetFee,
       @Semantics.amount.currencyCode: 'CurrencyCode'
       total_price           as TotalPrice,
+      discount              as Discount,
       currency_code         as CurrencyCode,
       description           as Description,
 

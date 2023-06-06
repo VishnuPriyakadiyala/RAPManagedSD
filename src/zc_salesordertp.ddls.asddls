@@ -31,6 +31,8 @@ define root view entity ZC_SalesorderTP
   NetFee,
   @Semantics.amount.currencyCode: 'CurrencyCode'
   TotalPrice,
+  @Semantics.amount.currencyCode: 'CurrencyCode'
+  Discount,
   @Consumption.valueHelpDefinition: [ {
     entity: {
       name: 'I_Currency', 

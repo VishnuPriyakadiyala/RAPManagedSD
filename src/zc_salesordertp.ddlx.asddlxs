@@ -52,7 +52,8 @@ annotate view ZC_SalesorderTP with
    { type: #FOR_ACTION, dataAction: 'CopyOrder',     label: 'Copy Order',      invocationGrouping:#CHANGE_SET }  ]
   @UI.identification: [ {
     position: 20
-  } ]
+  },
+   { type: #FOR_ACTION, dataAction: 'adddiscount',     label: 'Add Discount Fees' }   ]
   @UI.selectionField: [ {
     position: 20
   } ]
@@ -127,6 +128,16 @@ annotate view ZC_SalesorderTP with
   } ]
   TotalPrice;
 
+  @UI.lineItem: [ {
+    position: 95 ,
+    importance: #HIGH
+  } ]
+  @UI.identification: [ {
+    position: 95
+  } ]
+  @EndUserText.label: 'Discounts' 
+  Discount;
+  
   @UI.selectionField: [ {
     position: 100
   } ]

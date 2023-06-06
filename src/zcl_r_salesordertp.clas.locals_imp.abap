@@ -10,6 +10,8 @@ CLASS lhc_Salesorder DEFINITION INHERITING FROM cl_abap_behavior_handler.
       IMPORTING keys FOR ACTION Salesorder~CreateInstance.
     METHODS CopyOrder FOR MODIFY
       IMPORTING keys FOR ACTION Salesorder~CopyOrder.
+    METHODS adddiscount FOR MODIFY
+      IMPORTING keys FOR ACTION Salesorder~adddiscount RESULT result.
 
 ENDCLASS.
 
@@ -164,6 +166,46 @@ CLASS lhc_Salesorder IMPLEMENTATION.
        ALL FIELDS WITH  CORRESPONDING #( keys )
     RESULT DATA(lt_SalesorderItem)
     FAILED data(lt_failed).
+  ENDMETHOD.
+
+  METHOD adddiscount.
+
+    TRY.
+        DATA(lv_new_discount) = keys[ 1 ]-%param-discount_fee.
+
+        READ ENTITIES OF ZR_SalesorderTP IN LOCAL MODE
+        ENTITY Salesorder
+        FIELDS (  NetFee Discount TotalPrice )
+        WITH CORRESPONDING #( keys )
+        RESULT DATA(lt_order).
+
+        LOOP AT lt_order ASSIGNING FIELD-SYMBOL(<ls_order>).
+          <ls_order>-Discount = lv_new_discount.
+          <ls_order>-NetFee   = <ls_order>-TotalPrice - lv_new_discount.
+        ENDLOOP.
+
+        MODIFY ENTITIES OF  ZR_SalesorderTP IN LOCAL MODE
+        ENTITY Salesorder
+        UPDATE FIELDS (  NetFee Discount )
+        WITH VALUE #( FOR <ls_order_t> IN lt_order
+                       (  %tky = <ls_order_t>-%tky
+                          NetFee = <ls_order_t>-NetFee
+                          Discount = <ls_order_t>-Discount )  )
+                          REPORTED DATA(lt_reported).
+
+        reported = CORRESPONDING #( DEEP  lt_reported ).
+
+        READ ENTITIES OF ZR_SalesorderTP IN LOCAL MODE
+              ENTITY Salesorder
+              ALL FIELDS
+              WITH CORRESPONDING #( keys )
+              RESULT DATA(lt_order_all).
+
+        result = VALUE #( FOR <ls_result> IN lt_order_all ( %tky = <ls_result>-%tky
+        %param = <ls_result> ) ).
+
+      CATCH cx_sy_itab_line_not_found.
+    ENDTRY.
   ENDMETHOD.
 
 ENDCLASS.

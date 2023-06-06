@@ -1,0 +1,8 @@
+@Metadata.layer: #CUSTOMER
+annotate entity ZI_AddDiscount with
+{
+
+  @EndUserText.label: 'Discount (In amount)'
+  discount_fee;
+
+}

@@ -12,7 +12,7 @@ authorization master ( global )
 etag master LocalLastChangedAt
 {
   field ( numbering : managed, readonly ) OrderUUID;
-  field ( readonly ) OrderID;
+  field ( readonly ) OrderID , Discount;
   field ( mandatory ) CustomerID;
   create;
   update;
@@ -21,7 +21,7 @@ etag master LocalLastChangedAt
   determination CalculateOrderID on save { create; }
   static factory action CreateInstance [1];
   factory action CopyOrder [1];
-
+  action adddiscount parameter zi_adddiscount result [1] $self;
   mapping for zsd_vbak
     {
       OrderUUID          = order_uuid;
@@ -33,6 +33,7 @@ etag master LocalLastChangedAt
       EndDate            = end_date;
       NetFee             = net_fee;
       TotalPrice         = total_price;
+      Discount           = discount;
       CurrencyCode       = currency_code;
       Description        = description;
       OverallStatus      = overall_status;

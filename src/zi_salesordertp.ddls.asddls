@@ -14,6 +14,7 @@ define root view entity ZI_SalesorderTP
   EndDate,
   NetFee,
   TotalPrice,
+  Discount,
   CurrencyCode,
   Description,
   OverallStatus,

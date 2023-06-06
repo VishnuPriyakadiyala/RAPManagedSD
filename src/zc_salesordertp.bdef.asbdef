@@ -20,7 +20,7 @@ define behavior for ZC_SalesorderTP alias Salesorder
 
   use action CreateInstance;
   use action CopyOrder;
-
+  use action adddiscount;
 
 
 }
