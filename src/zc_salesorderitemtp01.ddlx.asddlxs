@@ -1,6 +1,7 @@
 @Metadata.layer: #CUSTOMER
 @UI: {
   headerInfo: {
+     imageUrl: 'ProdImageURL',
     typeName: 'SalesorderItem',
     typeNamePlural: 'SalesorderItems',
     title: {
@@ -61,6 +62,7 @@ annotate view ZC_SalesorderItemTP01 with
   @UI.identification: [ {
     position: 50
   } ]
+
   Product;
 
   @UI.lineItem: [ {

@@ -4,4 +4,5 @@ define service ZR_SalesorderProcessing {
   expose ZC_SalesorderItemTP01 as SalesorderItem;
   expose ZI_STATUSORDVH as StatusValueHelp;
   expose ZI_CUSTOMERVH as CustomerValueHelp;
+  expose ZC_PRODUCTQUICKVIEWP as ProductQVHelp;
 }

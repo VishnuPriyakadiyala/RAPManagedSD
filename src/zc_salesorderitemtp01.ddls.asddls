@@ -19,6 +19,8 @@ define view entity ZC_SalesorderItemTP01
     }
   } ]
   @EndUserText.label: 'Product'
+    @Consumption.semanticObject: 'ProductQV'
+      @ObjectModel.foreignKey.association: '_ProductQV'
   Product,
   @Semantics.quantity.unitOfMeasure: 'Orderquantityunit'
   Orderquantity,
@@ -49,11 +51,14 @@ ProdCurrency,
   } ]
   @Semantics.currencyCode: true  
   Transactioncurrency,
+   @ObjectModel.virtualElementCalculatedBy: 'ABAP:ZCL_PRODUCT_IMG'
+      virtual ProdImageURL: abap.string( 1000 ),
   Creationdate,
   Createbyuser,
   Creationdatetime,
   Lastchangedbyuser,
   
-  _Salesorder : redirected to parent ZC_SalesorderTP
+  _Salesorder : redirected to parent ZC_SalesorderTP,
+  _ProductQV
   
 }

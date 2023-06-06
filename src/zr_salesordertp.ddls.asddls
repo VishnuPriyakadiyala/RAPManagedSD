@@ -6,6 +6,7 @@ define root view entity ZR_SalesorderTP
   composition [0..*] of ZR_SalesorderItemTP01 as _SalesorderItem
   association [0..1] to ZI_STATUSORDVH        as _STATUS   on $projection.OverallStatus = _STATUS.status
   association [0..1] to zsd_customer          as _Customer on $projection.CustomerID = _Customer.customer_id
+  
 
 {
   key order_uuid            as OrderUUID,

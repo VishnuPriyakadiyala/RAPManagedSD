@@ -6,6 +6,8 @@ define view entity ZR_SalesorderItemTP01
   association to parent ZR_SalesorderTP as _Salesorder on $projection.OrderUUID = _Salesorder.OrderUUID
   
   association [0..1] to ZI_PRODUCTVH      as _product on $projection.Product = _product.IdProd
+   association [0..1] to ZC_PRODUCTQUICKVIEWP  as _ProductQV on $projection.Product = _ProductQV.product
+ 
 {
   key orderitem_uuid as OrderitemUUID,
   order_uuid as OrderUUID,
@@ -30,5 +32,6 @@ prod_currency as ProdCurrency,
   creationdatetime as Creationdatetime,
   lastchangedbyuser as Lastchangedbyuser,
   _Salesorder,
-  _product
+  _product,
+  _ProductQV
 }
