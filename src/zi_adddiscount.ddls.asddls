@@ -7,5 +7,6 @@ define abstract entity ZI_AddDiscount
  
  @Semantics.amount.currencyCode : 'currency_code'
  discount_fee : /dmo/total_price; 
+ @Consumption.valueHelpDefinition: [{ entity.name: 'I_CurrencyStdVH', entity.element: 'Currency' }]
  currency_code : /dmo/currency_code;  
 }

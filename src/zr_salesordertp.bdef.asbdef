@@ -22,6 +22,7 @@ etag master LocalLastChangedAt
   static factory action CreateInstance [1];
   factory action CopyOrder [1];
   action adddiscount parameter zi_adddiscount result [1] $self;
+
   mapping for zsd_vbak
     {
       OrderUUID          = order_uuid;

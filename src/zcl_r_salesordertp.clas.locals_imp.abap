@@ -66,45 +66,45 @@ CLASS lhc_Salesorder IMPLEMENTATION.
   METHOD CreateInstance.
 
 * change this to real time numbering
-          DATA(lv_date) = cl_abap_context_info=>get_system_date(  ).
+    DATA(lv_date) = cl_abap_context_info=>get_system_date(  ).
 
-  TRY.
-          cl_numberrange_runtime=>number_get(
-            EXPORTING
-              nr_range_nr       = '01'
-              object            = '/DMO/TRV_M'
-              quantity          = '1'
-            IMPORTING
-              number            = DATA(number_range_key)
+    TRY.
+        cl_numberrange_runtime=>number_get(
+          EXPORTING
+            nr_range_nr       = '01'
+            object            = '/DMO/TRV_M'
+            quantity          = '1'
+          IMPORTING
+            number            = DATA(number_range_key)
 
-          ).
-        CATCH cx_number_ranges INTO DATA(lx_number_ranges).
+        ).
+      CATCH cx_number_ranges INTO DATA(lx_number_ranges).
     ENDTRY.
-  MODIFY ENTITIES OF zr_salesordertp IN LOCAL MODE
-             ENTITY Salesorder
-                CREATE from value #( for <ls_keys> in keys
-                ( %cid             = <ls_keys>-%cid
-                  %is_draft        = <ls_keys>-%param-%is_draft
-                   Description     = 'New Order'
-                   overallstatus   = 'O'
-                   OrderID         = number_range_key
-                   BeginDate       = lv_date
-                   EndDate         = lv_date + 364
-                   OrderDate       = lv_date
-                   %control        = VALUE #(  Description   = if_abap_behv=>mk-on
-                                               OverallStatus = if_abap_behv=>mk-on
-                                               OrderID       = if_abap_behv=>mk-on
-                                               BeginDate     = if_abap_behv=>mk-on
-                                               EndDate       = if_abap_behv=>mk-on
-                                               OrderDate     = if_abap_behv=>mk-on
-                                              )
-                   )
+    MODIFY ENTITIES OF zr_salesordertp IN LOCAL MODE
+               ENTITY Salesorder
+                  CREATE FROM VALUE #( FOR <ls_keys> IN keys
+                  ( %cid             = <ls_keys>-%cid
+                    %is_draft        = <ls_keys>-%param-%is_draft
+                     Description     = 'New Order'
+                     overallstatus   = 'O'
+                     OrderID         = number_range_key
+                     BeginDate       = lv_date
+                     EndDate         = lv_date + 364
+                     OrderDate       = lv_date
+                     %control        = VALUE #(  Description   = if_abap_behv=>mk-on
+                                                 OverallStatus = if_abap_behv=>mk-on
+                                                 OrderID       = if_abap_behv=>mk-on
+                                                 BeginDate     = if_abap_behv=>mk-on
+                                                 EndDate       = if_abap_behv=>mk-on
+                                                 OrderDate     = if_abap_behv=>mk-on
+                                                )
+                     )
 
-                )
-                MAPPED data(lt_mapped)
-             FAILED data(LT_failed)
-             REPORTED DATA(LT_reported).
-             mapped = CORRESPONDING #( deep lt_mapped ).
+                  )
+                  MAPPED DATA(lt_mapped)
+               FAILED DATA(LT_failed)
+               REPORTED DATA(LT_reported).
+    mapped = CORRESPONDING #( DEEP lt_mapped ).
 
   ENDMETHOD.
 
@@ -112,7 +112,7 @@ CLASS lhc_Salesorder IMPLEMENTATION.
 
 
 *    Process the records
-    DATA lt_order TYPE TABLE FOR create ZR_SalesorderTP\\Salesorder.
+    DATA lt_order TYPE TABLE FOR CREATE ZR_SalesorderTP\\Salesorder.
 
 
 
@@ -134,13 +134,13 @@ CLASS lhc_Salesorder IMPLEMENTATION.
 
 
 * change this to real time numbering
-          DATA(lv_date) = cl_abap_context_info=>get_system_date(  ).
-          DATA(lv_time) = cl_abap_context_info=>get_system_time(  ).
+      DATA(lv_date) = cl_abap_context_info=>get_system_date(  ).
+      DATA(lv_time) = cl_abap_context_info=>get_system_time(  ).
 
-          <ls_neworder>-OrderID = lv_time && lv_date.
-          <ls_neworder>-overallstatus = 'O'.
-          <ls_neworder>-BeginDate = cl_abap_context_info=>get_system_date(  ).
-          <ls_neworder>-CurrencyCode = 'INR'.
+      <ls_neworder>-OrderID = lv_time && lv_date.
+      <ls_neworder>-overallstatus = 'O'.
+      <ls_neworder>-BeginDate = cl_abap_context_info=>get_system_date(  ).
+      <ls_neworder>-CurrencyCode = 'INR'.
     ENDLOOP.
 
     "Create BO Instance by COpy
@@ -161,11 +161,11 @@ CLASS lhc_Salesorder IMPLEMENTATION.
 *    modify item data
 
     DATA lt_item TYPE TABLE FOR UPDATE ZR_SalesorderTP\\SalesorderItem.
- READ ENTIties of ZR_SalesorderTP in LOCAL MODE
-    ENTITY Salesorder by \_SalesorderItem
-       ALL FIELDS WITH  CORRESPONDING #( keys )
-    RESULT DATA(lt_SalesorderItem)
-    FAILED data(lt_failed).
+    READ ENTITIES OF ZR_SalesorderTP IN LOCAL MODE
+       ENTITY Salesorder BY \_SalesorderItem
+          ALL FIELDS WITH  CORRESPONDING #( keys )
+       RESULT DATA(lt_SalesorderItem)
+       FAILED DATA(lt_failed).
   ENDMETHOD.
 
   METHOD adddiscount.
@@ -180,30 +180,52 @@ CLASS lhc_Salesorder IMPLEMENTATION.
         RESULT DATA(lt_order).
 
         LOOP AT lt_order ASSIGNING FIELD-SYMBOL(<ls_order>).
-          <ls_order>-Discount = lv_new_discount.
-          <ls_order>-NetFee   = <ls_order>-TotalPrice - lv_new_discount.
+
+          APPEND VALUE #( %tky                =  <ls_order>-%tky
+                          %state_area         = 'VALIDATE_DISCOUNT' ) TO reported-salesorder.
+          IF  lv_new_discount < <ls_order>-TotalPrice.
+            <ls_order>-Discount = lv_new_discount.
+            <ls_order>-NetFee   = <ls_order>-TotalPrice - lv_new_discount.
+          ELSE.
+            APPEND VALUE #( %tky    = <ls_order>-%tky ) TO failed-salesorder.
+
+
+            APPEND VALUE #( %tky            =  <ls_order>-%tky
+                        %state_area         = 'VALIDATE_DISCOUNT'
+
+                        %msg                = NEW zcm_msg_order(  severity   = if_abap_behv_message=>severity-error
+                                                                  textid     = zcm_msg_order=>invalid_discount
+                                                                  discount   = lv_new_discount
+                                                                  totalprice = <ls_order>-TotalPrice
+                                                                   )
+                         %element-discount   = if_abap_behv=>mk-on
+
+                         )
+                                                                  TO reported-salesorder.
+
+          ENDIF.
         ENDLOOP.
+        IF failed IS INITIAL.
+          MODIFY ENTITIES OF  ZR_SalesorderTP IN LOCAL MODE
+          ENTITY Salesorder
+          UPDATE FIELDS (  NetFee Discount )
+          WITH VALUE #( FOR <ls_order_t> IN lt_order
+                         (  %tky = <ls_order_t>-%tky
+                            NetFee = <ls_order_t>-NetFee
+                            Discount = <ls_order_t>-Discount )  )
+                            REPORTED DATA(lt_reported).
 
-        MODIFY ENTITIES OF  ZR_SalesorderTP IN LOCAL MODE
-        ENTITY Salesorder
-        UPDATE FIELDS (  NetFee Discount )
-        WITH VALUE #( FOR <ls_order_t> IN lt_order
-                       (  %tky = <ls_order_t>-%tky
-                          NetFee = <ls_order_t>-NetFee
-                          Discount = <ls_order_t>-Discount )  )
-                          REPORTED DATA(lt_reported).
+          reported = CORRESPONDING #( DEEP  lt_reported ).
 
-        reported = CORRESPONDING #( DEEP  lt_reported ).
+          READ ENTITIES OF ZR_SalesorderTP IN LOCAL MODE
+                ENTITY Salesorder
+                ALL FIELDS
+                WITH CORRESPONDING #( keys )
+                RESULT DATA(lt_order_all).
 
-        READ ENTITIES OF ZR_SalesorderTP IN LOCAL MODE
-              ENTITY Salesorder
-              ALL FIELDS
-              WITH CORRESPONDING #( keys )
-              RESULT DATA(lt_order_all).
-
-        result = VALUE #( FOR <ls_result> IN lt_order_all ( %tky = <ls_result>-%tky
-        %param = <ls_result> ) ).
-
+          result = VALUE #( FOR <ls_result> IN lt_order_all ( %tky = <ls_result>-%tky
+          %param = <ls_result> ) ).
+        ENDIF.
       CATCH cx_sy_itab_line_not_found.
     ENDTRY.
   ENDMETHOD.
