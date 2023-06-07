@@ -50,6 +50,7 @@ define root view entity ZC_SalesorderTP
      @ObjectModel.text.element: ['StatusText']     
   OverallStatus,
  
+OverallStatusCriticality,
   _STATUS.status_text as StatusText,
   CreatedBy,
   CreatedAt,

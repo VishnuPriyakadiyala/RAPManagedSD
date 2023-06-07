@@ -25,7 +25,13 @@ define root view entity ZR_SalesorderTP
       description           as Description,
 
       overall_status        as OverallStatus,
-
+case overall_status
+  when 'O'  then 2    -- 'open'       | 2: yellow colour
+  when 'C'  then 3    -- 'accepted'   | 3: green colour
+  when 'D'  then 3
+  when 'R'  then 1    -- 'rejected'   | 1: red colour
+            else 1    -- 'nothing'    | 0: unknown
+end                   as OverallStatusCriticality,
       @Semantics.user.createdBy: true
       created_by            as CreatedBy,
       @Semantics.systemDateTime.createdAt: true

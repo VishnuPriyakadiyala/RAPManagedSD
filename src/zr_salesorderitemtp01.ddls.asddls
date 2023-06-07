@@ -6,14 +6,16 @@ define view entity ZR_SalesorderItemTP01
   association to parent ZR_SalesorderTP as _Salesorder on $projection.OrderUUID = _Salesorder.OrderUUID
   
   association [0..1] to ZI_PRODUCTVH      as _product on $projection.Product = _product.IdProd
-   association [0..1] to ZC_PRODUCTQUICKVIEWP  as _ProductQV on $projection.Product = _ProductQV.product
+   association [0..1] to ZI_PRODUCTQUICKVIEW  as _ProductQV on $projection.Product = _ProductQV.Product
  
 {
   key orderitem_uuid as OrderitemUUID,
   order_uuid as OrderUUID,
   order_id as OrderID,
   orderitem as Orderitem,
+
   product as Product,
+  stars_value  as StarsValue,
   @Semantics.quantity.unitOfMeasure: 'Orderquantityunit'
   orderquantity as Orderquantity,
   orderquantityunit as Orderquantityunit,

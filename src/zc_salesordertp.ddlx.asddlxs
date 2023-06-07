@@ -21,7 +21,20 @@
 }
 annotate view ZC_SalesorderTP with
 {
-  @UI.facet: [ {
+  @UI.facet: [   {
+          id: 'HeaderPrice',
+          purpose: #HEADER,
+          type: #DATAPOINT_REFERENCE,
+          position: 10,
+          targetQualifier: 'PriceData'
+      },
+      {
+          id: 'OverallStatus',
+          purpose: #HEADER,
+          type: #DATAPOINT_REFERENCE,
+          position: 20,
+          targetQualifier: 'StatusData'
+       },{
     id: 'idCollection',
     type: #COLLECTION,
     label: 'Salesorder',
@@ -117,6 +130,8 @@ annotate view ZC_SalesorderTP with
     position: 80
   } ]
   @EndUserText.label: 'Net Fee (With Discounts)'
+  
+  @UI.dataPoint: { qualifier: 'PriceData', title: 'Net Fee'}
   NetFee;
 
   @UI.lineItem: [ {
@@ -126,6 +141,7 @@ annotate view ZC_SalesorderTP with
   @UI.identification: [ {
     position: 90
   } ]
+  
   TotalPrice;
 
   @UI.lineItem: [ {
@@ -159,8 +175,8 @@ annotate view ZC_SalesorderTP with
   @UI.identification: [ {
     position: 120
   } ]
+  @UI.dataPoint: { qualifier: 'StatusData', title: 'Status',criticality: 'OverallStatusCriticality'}
   OverallStatus;
-
   @UI.hidden: true
   CreatedBy;
 

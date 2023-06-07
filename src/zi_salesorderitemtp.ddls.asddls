@@ -8,6 +8,7 @@ define view entity ZI_SalesorderItemTP
   OrderID,
   Orderitem,
   Product,
+  StarsValue,
   ProdPrice, 
 ProdCurrency,  
   Orderquantity,

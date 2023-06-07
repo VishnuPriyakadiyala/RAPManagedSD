@@ -78,6 +78,7 @@ etag dependent by _Salesorder
       OrderID             = order_id;
       Orderitem           = orderitem;
       Product             = product;
+      StarsValue          = stars_value;
       Orderquantity       = orderquantity;
       Orderquantityunit   = orderquantityunit;
       ProdPrice           = prod_price;

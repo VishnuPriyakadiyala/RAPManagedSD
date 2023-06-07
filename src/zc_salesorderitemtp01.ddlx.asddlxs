@@ -28,16 +28,25 @@ annotate view ZC_SalesorderItemTP01 with
     type: #IDENTIFICATION_REFERENCE,
     label: 'SalesorderItem',
     position: 10
+  },
+  {
+  purpose    : #HEADER, // or #STANDARD
+  label      : 'Item Information',
+  type       : #FIELDGROUP_REFERENCE,
+  targetQualifier: 'HeaderData'
   } ]
   @UI.hidden: true
   OrderitemUUID;
 
   @UI.hidden: true
   OrderUUID;
-
+  @EndUserText.label: 'Product Image'
+  @UI.lineItem: [{  position: 20 ,importance: #HIGH }]
+  ProdImageURL;
   @UI.lineItem: [ {
     position: 30 ,
     importance: #HIGH
+
   } ]
   @UI.identification: [ {
     position: 30
@@ -55,16 +64,57 @@ annotate view ZC_SalesorderItemTP01 with
   @EndUserText.label: 'Order Item'
   Orderitem;
 
+  @Consumption.semanticObject: 'ProductQV'
   @UI.lineItem: [ {
     position: 50 ,
     importance: #HIGH
+//    ,
+//     type: #FOR_INTENT_BASED_NAVIGATION,
+//     semanticObjectAction: 'ProductQV'
+
   } ]
   @UI.identification: [ {
     position: 50
   } ]
+  @UI.fieldGroup: [{
+    qualifier: 'HeaderData',
+    position: 40,
+    label: 'Product'
+  }]
+  @EndUserText.label: 'Product'
+  @EndUserText.quickInfo: 'QuickView'
 
   Product;
-
+  @UI: {
+    // Search Term #DataPointRating, #DataPointRatingTable
+    dataPoint: {
+      qualifier: 'StarsValue',
+      targetValue: 4,
+      visualization: #RATING,
+      title: 'Rating Indicator (#DataPointRating)'
+    },
+    // Search Term #DataPointRatingTable
+    lineItem: [
+      {
+        type: #AS_DATAPOINT,
+        label: 'Rating Indicator',
+        importance: #LOW,
+        position: 90
+      }
+    ],
+    fieldGroup: [{ 
+     qualifier: 'HeaderData',
+      position: 60,
+      type: #AS_DATAPOINT,
+      label: 'Rating Indicator'
+    }],
+     identification: [ {
+    position: 90,
+     type: #AS_DATAPOINT,
+     label: 'Edit Rating Indicator'
+  }]
+  }
+  StarsValue;
   @UI.lineItem: [ {
     position: 60 ,
     importance: #HIGH
@@ -101,4 +151,5 @@ annotate view ZC_SalesorderItemTP01 with
 
   @UI.hidden: true
   Lastchangedbyuser;
+
 }
