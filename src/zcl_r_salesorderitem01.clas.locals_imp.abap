@@ -40,10 +40,9 @@ CLASS lhc_SalesorderItem IMPLEMENTATION.
           TRY.
               DATA(ls_product) = lt_product[ id_prod = <ls_salesorderitem>-Product ].
               <ls_salesorderitem>-Netamount = ls_product-price * <ls_salesorderitem>-Orderquantity.
-*              <ls_salesorderitem>-ProdPrice = ls_product-price.
+
               <ls_salesorderitem>-Transactioncurrency = ls_product-currency.
-*              <ls_salesorderitem>-Orderquantityunit = COND #( WHEN ls_product-price IS NOT INITIAL
-*                                                           THEN 'EA' ).
+
             CATCH cx_sy_itab_line_not_found.
 *      failed to determine the product .. Raise a message
           ENDTRY.
@@ -75,7 +74,7 @@ CLASS lhc_SalesorderItem IMPLEMENTATION.
 
     READ ENTITIES OF zr_salesordertp IN LOCAL MODE
     ENTITY SalesorderItem BY \_Salesorder
-    FIELDS ( OrderUUID )
+    FIELDS ( OrderUUID Discount )
     WITH CORRESPONDING #( keys )
     RESULT DATA(lt_salesorder)
     FAILED DATA(lt_failed).
@@ -88,36 +87,45 @@ CLASS lhc_SalesorderItem IMPLEMENTATION.
  FAILED DATA(lt_faileditem).
 
 * Process the items to get the header Net Fee
-    LOOP AT lt_salesorderitems ASSIGNING FIELD-SYMBOL(<ls_orderitems>). "only one item is received
+    LOOP AT lt_salesorder ASSIGNING FIELD-SYMBOL(<ls_order>).
+      LOOP AT lt_salesorderitems ASSIGNING FIELD-SYMBOL(<ls_orderitems>)
+      WHERE %data-OrderUUID = <ls_order>-%data-OrderUUID. "only one item is received
 
-      IF <ls_orderitems>-Netamount IS NOT INITIAL.
+        IF <ls_orderitems>-Netamount IS NOT INITIAL.
 
-        READ TABLE lt_update ASSIGNING FIELD-SYMBOL(<ls_update>)
-        WITH KEY OrderUUID = <ls_orderitems>-OrderUUID.
+          READ TABLE lt_update ASSIGNING FIELD-SYMBOL(<ls_update>)
+          WITH KEY OrderUUID = <ls_orderitems>-OrderUUID.
 *          WITH KEY entity COMPONENTS %tky = CORRESPONDING #( <ls_orderitems>-%tky ).
-        IF sy-subrc IS NOT INITIAL.
-          APPEND VALUE #(  %tky     = VALUE #( %is_draft =   <ls_orderitems>-%is_draft
-                                               OrderUUID = <ls_orderitems>-OrderUUID )
-                           %control    = VALUE #( TotalPrice   = if_abap_behv=>mk-on
-                                                  NetFee       = if_abap_behv=>mk-on
-                                                  CurrencyCode = if_abap_behv=>mk-on ) ) TO lt_update ASSIGNING <ls_update>.
-        ENDIF.
+          IF sy-subrc IS NOT INITIAL.
+            APPEND VALUE #(  %tky     = VALUE #( %is_draft =   <ls_orderitems>-%is_draft
+                                                 OrderUUID = <ls_orderitems>-OrderUUID )
+                             %control    = VALUE #( TotalPrice   = if_abap_behv=>mk-on
+                                                    NetFee       = if_abap_behv=>mk-on
+                                                    CurrencyCode = if_abap_behv=>mk-on ) ) TO lt_update ASSIGNING <ls_update>.
+          ENDIF.
 
-        READ TABLE lt_orderchanged ASSIGNING FIELD-SYMBOL(<ls_orderchanged>)
-                WITH KEY OrderitemUUID = <ls_orderitems>-OrderitemUUID.
-        IF sy-subrc IS INITIAL.
-          <ls_update>-TotalPrice = <ls_update>-TotalPrice + <ls_orderchanged>-Netamount.
-          <ls_update>-NetFee = <ls_update>-NetFee + <ls_orderchanged>-Netamount.
-          <ls_update>-CurrencyCode = <ls_orderchanged>-Transactioncurrency.
-        ELSE.
-          <ls_update>-TotalPrice = <ls_update>-TotalPrice + <ls_orderitems>-Netamount.
-          <ls_update>-NetFee = <ls_update>-NetFee + <ls_orderitems>-Netamount.
-          <ls_update>-CurrencyCode = <ls_orderitems>-Transactioncurrency.
+          READ TABLE lt_orderchanged ASSIGNING FIELD-SYMBOL(<ls_orderchanged>)
+                  WITH KEY OrderitemUUID = <ls_orderitems>-OrderitemUUID.
+          IF sy-subrc IS INITIAL.
+            <ls_update>-TotalPrice = <ls_update>-TotalPrice + <ls_orderchanged>-Netamount.
+            <ls_update>-NetFee = <ls_update>-NetFee + <ls_orderchanged>-Netamount.
+            <ls_update>-CurrencyCode = <ls_orderchanged>-Transactioncurrency.
+          ELSE.
+            <ls_update>-TotalPrice = <ls_update>-TotalPrice + <ls_orderitems>-Netamount.
+            <ls_update>-NetFee = <ls_update>-NetFee + <ls_orderitems>-Netamount.
+            <ls_update>-CurrencyCode = <ls_orderitems>-Transactioncurrency.
+          ENDIF.
         ENDIF.
-
-      ENDIF.
+      ENDLOOP.
+* Subtract the discount if already exists
+      TRY.
+          IF <ls_update> IS ASSIGNED.
+            DATA(lv_discount) = lt_salesorder[ 1 ]-%data-Discount.
+            <ls_update>-NetFee = <ls_update>-NetFee - lv_discount.
+          ENDIF.
+        CATCH cx_sy_itab_line_not_found.
+      ENDTRY.
     ENDLOOP.
-
 *    "update involved instances
     MODIFY ENTITY IN LOCAL MODE zr_salesordertp
       UPDATE FROM lt_update.
